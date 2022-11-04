@@ -24,17 +24,18 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         recyclerView = binding.rvMovies
+        movieViewModel.onCreate()
 
         movieViewModel.movieModel.observe(this, Observer { currentMovies ->
             recyclerView.layoutManager = LinearLayoutManager(this)
             recyclerView.adapter = ListAdapter(currentMovies)
         })
-
+/*
         binding.viewContainer.setOnClickListener {
-            movieViewModel.onCreate()
+
             //movieViewModel.getMovies()
         }
-
+*/
 
     }
 }
