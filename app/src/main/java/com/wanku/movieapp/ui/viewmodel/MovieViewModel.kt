@@ -2,14 +2,36 @@ package com.wanku.movieapp.ui.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.wanku.movieapp.data.model.MovieModel
-import com.wanku.movieapp.data.model.MovieProvider
+import androidx.lifecycle.viewModelScope
+import com.wanku.movieapp.domain.GetMoviesLocalUseCase
+import com.wanku.movieapp.domain.GetMoviesUseCase
+import com.wanku.movieapp.domain.model.Movie
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MovieViewModel:ViewModel() {
-    val movieModel = MutableLiveData<MovieModel?>()
+@HiltViewModel
+class MovieViewModel @Inject constructor(
+    private val getMoviesUseCase : GetMoviesUseCase,
+    private val getMoviesLocalUseCase : GetMoviesLocalUseCase
+):ViewModel() {
+    val movieModel = MutableLiveData<List<Movie>>()
+
+    //var getMoviesUseCase = GetMoviesUseCase()
+
+    fun onCreate() {
+        viewModelScope.launch {
+            val result = getMoviesUseCase()
+            movieModel.postValue(result)
+        }
+    }
 
     fun getMovies(){
-        val currentMovies: MovieModel? = MovieProvider.movies
-        movieModel.postValue(currentMovies)
+        viewModelScope.launch {
+            val currentMovies = getMoviesLocalUseCase()
+            movieModel.postValue(currentMovies)
+        }
     }
+
+
 }
